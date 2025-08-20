@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: discovery-service
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:7001}
+
+server:
+  port: ${SERVER_PORT:8761}
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVER_URL:http://localhost:8761/eureka}
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${ACTUATOR_ENDPOINTS:health,info}
+  endpoint:
+    health:
+      show-details: ${HEALTH_DETAILS:always}
