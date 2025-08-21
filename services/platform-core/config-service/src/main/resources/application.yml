@@ -13,7 +13,7 @@ spring:
           username: ${CONFIG_REPO_USERNAME:test-username}
           password: ${CONFIG_REPO_TOKEN:test-token}
           clone-on-start: true
-          search-paths: ${CONFIG_SEARCH_PATHS:application}
+          search-paths: ${CONFIG_SEARCH_PATHS:{application}}
           #default-label: ${CONFIG_GIT_BRANCH:main}
           #label: master
         #native:
