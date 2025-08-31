@@ -25,7 +25,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+      defaultZone: ${DISCOVERY_SERVICE_URI:http://localhost:8761/eureka/}
     enabled: ${EUREKA_ENABLED:true}
   instance:
     prefer-ip-address: true
