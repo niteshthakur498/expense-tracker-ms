@@ -1,0 +1,107 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2-seed-expense-category
+      author: yourname
+      changes:
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 1 }
+              - column: { name: category_title, value: "Food" }
+              - column: { name: category_description, value: "Food Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 2 }
+              - column: { name: category_title, value: "Rent" }
+              - column: { name: category_description, value: "Rent Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 3 }
+              - column: { name: category_title, value: "Travel" }
+              - column: { name: category_description, value: "Travel Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 4 }
+              - column: { name: category_title, value: "Payment" }
+              - column: { name: category_description, value: "Payment Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 5 }
+              - column: { name: category_title, value: "Investment" }
+              - column: { name: category_description, value: "Investment Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 6 }
+              - column: { name: category_title, value: "Entertainment" }
+              - column: { name: category_description, value: "Entertainment Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 7 }
+              - column: { name: category_title, value: "Medical" }
+              - column: { name: category_description, value: "Medical Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 8 }
+              - column: { name: category_title, value: "Loans" }
+              - column: { name: category_description, value: "Loans Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 9 }
+              - column: { name: category_title, value: "Bill Payments" }
+              - column: { name: category_description, value: "Bill Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 10 }
+              - column: { name: category_title, value: "Education" }
+              - column: { name: category_description, value: "Education Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 11 }
+              - column: { name: category_title, value: "Application and Software" }
+              - column: { name: category_description, value: "Software Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 12 }
+              - column: { name: category_title, value: "Insurance" }
+              - column: { name: category_description, value: "Insurance Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 13 }
+              - column: { name: category_title, value: "Fuel" }
+              - column: { name: category_description, value: "Fuel Related Expenses" }
+
+        - insert:
+            tableName: et_category
+            columns:
+              - column: { name: category_id, valueNumeric: 14 }
+              - column: { name: category_title, value: "Miscellaneous" }
+              - column: { name: category_description, value: "Miscellaneous Expenses" }
+
+      rollback:
+        - delete:
+            tableName: et_category
+            where: category_id in (1,2,3,4,5,6,7,8,9,10,11,12,13,14)

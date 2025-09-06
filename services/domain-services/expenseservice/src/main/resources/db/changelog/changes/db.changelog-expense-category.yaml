@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-expense-category-table
+      author: yourname
+      changes:
+        - createSequence:
+            sequenceName: et_seq_category_id
+            startValue: 1
+            incrementBy: 1
+
+        - createTable:
+            tableName: et_category
+            columns:
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: category_title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_description
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropTable:
+            tableName: et_category
+        - dropSequence:
+            sequenceName: et_seq_category_id

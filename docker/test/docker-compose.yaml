@@ -31,8 +31,28 @@ services:
       retries: 3
       start_period: 10s
   
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "8041:8001"  # Port for accessing RedisInsight in the browser
+    restart: unless-stopped
+    environment:
+      - REDISINSIGHT_PASSWORD=your_password_here  # Optional: password for RedisInsight login
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001"]
+      interval: 30s
+      retries: 3
+      timeout: 20s
+      start_period: 10s
+    depends_on:
+      - redis-cache  # Ensures RedisInsight waits for Redis to be available
+    networks:
+      - nitesh-network  # Connect to the custom network
+      
   keycloak:
     image: quay.io/keycloak/keycloak:23.0.6
+    container_name: keycloak
     command: start
     environment:
       KC_HOSTNAME: localhost
@@ -58,9 +78,8 @@ services:
   config-server:
     container_name: config-server
     image: 498niteshthakur/config-service-image:latest
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker  # Set profile to 'docker'
-      - EUREKA_URI=http://discovery-server:8761/eureka
+    env_file:
+      - .env # This passes all variables from .env
     ports:
       - "7001:7001"  # Expose port 7001 of service to 7021 on the host machine
     healthcheck:
@@ -81,8 +100,8 @@ services:
     image: 498niteshthakur/discovery-service-image:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker  # Set profile to 'docker'
-      - CONFIG_GIT_URI=http://config-server:7021
-      - EUREKA_URI=http://discovery-server:8761/eureka
+      #- CONFIG_GIT_URI=http://config-server:7021
+      #- EUREKA_URI=http://discovery-server:8761/eureka
     ports:
       - "8761:8761"  # Expose port 8080 of service to 8081 on the host machine
     depends_on:

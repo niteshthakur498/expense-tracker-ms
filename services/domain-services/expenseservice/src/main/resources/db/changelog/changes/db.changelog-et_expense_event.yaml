@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-et-expense-event
+      author: your_name
+      changes:
+        # Create sequence for event_id
+        - createSequence:
+            sequenceName: et_seq_event_id
+            startValue: 1
+            incrementBy: 1
+
+        # Create table et_expense_event (NO budget column yet)
+        - createTable:
+            tableName: et_expense_event
+            columns:
+              - column:
+                  name: event_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: event_title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: event_description
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: event_status
+                  type: CHAR(1)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_input_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+
+      rollback:
+        - dropTable:
+            tableName: et_expense_event
+        - dropSequence:
+            sequenceName: et_seq_event_id
+
+  - changeSet:
+      id: 002-add-budget-column
+      author: your_name
+      changes:
+        - addColumn:
+            tableName: et_expense_event
+            columns:
+              - column:
+                  name: budget
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: true
+
+      rollback:
+        - dropColumn:
+            tableName: et_expense_event
+            columnName: budget

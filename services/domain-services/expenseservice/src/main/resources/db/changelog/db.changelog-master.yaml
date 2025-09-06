@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/db.changelog-et_expense_event.yaml
+  - include:
+      file: db/changelog/changes/db.changelog-expense-category.yaml
+  - include:
+      file: db/changelog/changes/db.changelog-seed-expense-category.yaml
+  - include:
+      file: db/changelog/changes/db.changelog-expense.yaml
