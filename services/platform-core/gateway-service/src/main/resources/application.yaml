@@ -1,0 +1,120 @@
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            # User Service
+            - id: expense-service
+              uri: lb://expense-service           # Load-balanced call via Eureka
+              predicates:
+                - Path=/expense-service/**               # Route only user-related paths
+              filters:
+                - StripPrefix=1                # Remove `/users` before forwarding
+                - name: CircuitBreaker
+                  args:
+                    name: default
+                    fallbackUri: forward:/fallback/expense
+
+            - id: expense-service-static
+              uri: "http://localhost:2021/"   # direct fallback service address
+              predicates:
+                - Path=/expense-service-static/**
+              filters:
+                - StripPrefix=1
+                - name: CircuitBreaker
+                  args:
+                    name: expenseServiceCB
+                    fallbackUri: forward:/fallback/expense
+
+
+
+
+          default-filters:
+            # Global rate limiting (applies to all routes)
+      #      - name: RequestRateLimiter
+      #        args:
+      #          redis-rate-limiter.replenishRate: 10   # Allow 10 requests per second
+      #          redis-rate-limiter.burstCapacity: 20   # Allow bursts up to 20
+      #          key-resolver: "#{@ipKeyResolver}"      # Bean that resolves rate limit key (e.g., IP-based)
+
+            # Add header to all responses for traceability
+            - name: AddResponseHeader
+              args:
+                name: X-Gateway
+                value: Platform-API-Gateway
+
+            - name: AddRequestHeader
+              args:
+                name: X-From-Gateway
+                value: true
+
+            # Retry failed requests automatically
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                methods: GET, POST
+
+
+
+#  redis:
+#    host: localhost
+#    port: 6379
+
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URI:http://localhost:7001}
+
+
+
+server:
+  port: ${SERVER_PORT:2011}
+
+
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVICE_URI:http://localhost:8761/eureka}
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${ACTUATOR_ENDPOINTS:*}
+  endpoint:
+    health:
+      show-details: ${HEALTH_DETAILS:always}
+
+  health:
+    circuitbreakers:
+      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:                      # Default settings for all services
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 55
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+    instances:
+      # Only override if a service needs special properties
+      expenseServiceCB:
+        baseConfig: default
+        failureRateThreshold: 45    # override failure rate only
