@@ -3,15 +3,28 @@ spring:
     name: expense-service
 
   datasource:
-    url: jdbc:h2:file:./data/mydb;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console   # optional, defaults to /h2-console
+    url: jdbc:postgresql://${POSTGRES_HOST:10.202.233.116}:5432/test_db
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_USER_PWD:postgres}
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      # Set ddl-auto to 'none' to disable automatic schema generation by Hibernate
+      hibernate:
+        ddl-auto: none
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+#  datasource:
+#    url: jdbc:h2:file:./data/mydb;DB_CLOSE_DELAY=-1
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password: password
+#
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console   # optional, defaults to /h2-console
 
   liquibase:
     default-schema: ${SERVICE_SCHEMA:public}
@@ -42,7 +55,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: ${ACTUATOR_ENDPOINTS:health,info}
+        include: ${ACTUATOR_ENDPOINTS:health, info, prometheus, metrics}
   endpoint:
     health:
       show-details: ${HEALTH_DETAILS:always}
