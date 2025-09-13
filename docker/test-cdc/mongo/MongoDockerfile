@@ -1,0 +1,9 @@
+# Use the official MongoDB image as base
+FROM mongo:6.0
+
+# Copy the initialization script into the special folder
+COPY init-mongo.js /docker-entrypoint-initdb.d/
+
+# Expose MongoDB default port (optional)
+EXPOSE 27017
+
