@@ -36,9 +36,10 @@ public class ExpenseCdcConsumer {
                       repository.save(expenseRaw);
                     break;
                 case "d":
-                    log.info("Operation received is delete");
+                    log.info("Operation received is delete for "+message.getPayload().getBefore().getExpenseId());
                     Optional<ExpenseRaw> existingExpenseRaw = repository.findById(message.getPayload().getBefore().getExpenseId());
                     if(existingExpenseRaw.isPresent()){
+                        log.info("Entered to delete");
                         ExpenseRaw eR = existingExpenseRaw.get();
                         eR.setDeleted(true);
                         repository.save(eR);

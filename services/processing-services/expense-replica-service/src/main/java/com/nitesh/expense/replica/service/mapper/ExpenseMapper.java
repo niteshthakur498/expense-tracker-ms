@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,27 +70,52 @@ public interface ExpenseMapper {
     // Convert String to LocalDate (for expenseDate)
     @Named("stringToLocalDate")
     default LocalDate stringToLocalDate(String value) {
-        return value != null ? LocalDate.parse(value) : null;
+        if (value == null || value.isBlank()) return null;
+        try {
+            long days = Long.parseLong(value);   // e.g., 20454
+            return LocalDate.ofEpochDay(days);   // 2026-01-01
+        } catch (NumberFormatException e) {
+            // fallback: ISO date string
+            return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
+        }
     }
 
     // Convert LocalDate to String (for expenseDate)
     @Named("localDateToString")
     default String localDateToString(LocalDate value) {
-        return value != null ? value.toString() : null;
+        return value != null
+                ? String.valueOf(value.toEpochDay())
+                : null;
     }
 
     // Convert String to LocalDateTime (for expenseInputTime)
     @Named("stringToLocalDateTime")
     default LocalDateTime stringToLocalDateTime(String value) {
-        // Assuming the input String is in ISO-8601 format: 2021-10-06T15:16:01
-        return value != null ? LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME) : null;
+        if (value == null || value.isBlank()) return null;
+
+        // first: try to parse as long (epoch)
+        try {
+            long epoch = Long.parseLong(value);
+            // choose seconds vs millis
+            Instant instant = epoch > 9_999_999_999L      // ~Sat Nov 20 2286 (sec)
+                    ? Instant.ofEpochMilli(epoch)         // looks like millis
+                    : Instant.ofEpochSecond(epoch);
+            return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        } catch (NumberFormatException e) {
+            // fallback: ISO-8601 string ("2026-01-01T10:15:30")
+            return LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
+        }
     }
+
 
     // Convert LocalDateTime to String (for expenseInputTime)
     @Named("localDateTimeToString")
     default String localDateTimeToString(LocalDateTime value) {
-        // Convert LocalDateTime to String in ISO-8601 format
-        return value != null ? value.format(DateTimeFormatter.ISO_DATE_TIME) : null;
+        return value != null
+                ? String.valueOf(value.atZone(ZoneId.systemDefault())
+                                      .toInstant()
+                                      .toEpochMilli())   // or .toEpochSecond()
+                : null;
     }
 
     // Convert String to List<String> (for tags)

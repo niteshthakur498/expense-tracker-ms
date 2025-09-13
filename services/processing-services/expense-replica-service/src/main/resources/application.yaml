@@ -5,7 +5,7 @@ spring:
     mongodb:
       user: ${MONGODB_USER:root}
       password: ${MONGODB_USER_PWD:password}
-      uri: mongodb://${MONGODB_HOST:localhost}:27017/${MONGODB_COLLECTION:replicatedexpense}
+      uri: mongodb://${MONGODB_USER:appuser}:${MONGODB_USER_PWD:appuser}@${MONGODB_HOST:localhost}:27017/${MONGODB_COLLECTION:replicatedexpense}?authSource=replicatedexpense
   kafka:
     bootstrap-servers: ${KAFKA_BROKER_HOST:localhost}:9092
     consumer:

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class DbzData {
     @JsonProperty("expense_id")
-    private Long expenseId;
+    private String expenseId;
 
     @JsonProperty("user_id")
     private Long userId;
